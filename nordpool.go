@@ -74,9 +74,10 @@ func (p Prices) At(opts PriceOptions) (Result, error) {
 	date = date.In(location)
 
 	results, err := p.getValues(NordpoolOptions{
-		URL:      config.priceUrlHourly,
-		MaxRange: NordpoolRange{Hour: 1},
-		Date:     date,
+		URL:          config.priceUrlHourly,
+		MaxRange:     NordpoolRange{Hour: 1},
+		Date:         date,
+		PriceOptions: opts,
 	})
 	if err != nil {
 		return Result{}, err
