@@ -31,23 +31,25 @@ var config = struct {
 }
 
 type PriceOptions struct {
-	area     string
-	currency string
-	date     string
-	from     time.Time
-	to       time.Time
+	Area     string
+	Currency string
+	Date     string
+	From     time.Time
+	To       time.Time
 }
+
 type NordpoolRange struct {
-	hour  int
-	day   int
-	week  int
-	month int
+	Hour  int
+	Day   int
+	Week  int
+	Month int
 }
+
 type NordpoolOptions struct {
-	url           string
-	maxRange      NordpoolRange
-	maxRangeValue int
-	date          time.Time
+	URL           string
+	MaxRange      NordpoolRange
+	MaxRangeValue int
+	Date          time.Time
 	PriceOptions  // Omit<PriceOptions, "date">
 }
 
@@ -61,10 +63,10 @@ type Result struct {
 
 type Prices struct{}
 
-func (p Prices) at(opts PriceOptions) (Result, error) {
+func (p Prices) At(opts PriceOptions) (Result, error) {
 	var date time.Time
-	if opts.date != "" {
-		date, _ = time.Parse(time.RFC3339, opts.date)
+	if opts.Date != "" {
+		date, _ = time.Parse(time.RFC3339, opts.Date)
 	} else {
 		date = time.Now()
 	}
@@ -72,9 +74,9 @@ func (p Prices) at(opts PriceOptions) (Result, error) {
 	date = date.In(location)
 
 	results, err := p.getValues(NordpoolOptions{
-		url:      config.priceUrlHourly,
-		maxRange: NordpoolRange{hour: 1},
-		date:     date,
+		URL:      config.priceUrlHourly,
+		MaxRange: NordpoolRange{Hour: 1},
+		Date:     date,
 	})
 	if err != nil {
 		return Result{}, err
@@ -92,138 +94,138 @@ func (p Prices) at(opts PriceOptions) (Result, error) {
 	return Result{}, fmt.Errorf("no results found for %s", date.Format(time.RFC3339))
 }
 
-func (p Prices) hourly(opts PriceOptions) ([]Result, error) {
+func (p Prices) Hourly(opts PriceOptions) ([]Result, error) {
 	location, err := time.LoadLocation("Europe/Oslo")
 	if err != nil {
 		// handle error
 	}
 	date := time.Now().In(location)
 	nordpoolOpts := NordpoolOptions{
-		url:      config.priceUrlHourly,
-		maxRange: NordpoolRange{day: 1},
-		date:     date,
+		URL:      config.priceUrlHourly,
+		MaxRange: NordpoolRange{Day: 1},
+		Date:     date,
 	}
-	if opts.date != "" {
-		t, err := time.Parse(time.RFC3339, opts.date)
+	if opts.Date != "" {
+		t, err := time.Parse(time.RFC3339, opts.Date)
 		if err != nil {
 			return nil, err
 		}
-		nordpoolOpts.date = t
+		nordpoolOpts.Date = t
 	}
-	if opts.currency != "" {
-		nordpoolOpts.currency = opts.currency
+	if opts.Currency != "" {
+		nordpoolOpts.Currency = opts.Currency
 	}
-	if opts.area != "" {
-		nordpoolOpts.area = opts.area
+	if opts.Area != "" {
+		nordpoolOpts.Area = opts.Area
 	}
 	return p.getValues(nordpoolOpts)
 }
 
-func (p Prices) daily(opts PriceOptions) ([]Result, error) {
+func (p Prices) Daily(opts PriceOptions) ([]Result, error) {
 	location, err := time.LoadLocation("Europe/Oslo")
 	if err != nil {
 		return nil, err
 	}
 	date := time.Now().In(location)
 	nordpoolOpts := NordpoolOptions{
-		url:      config.priceUrlDaily,
-		maxRange: NordpoolRange{day: 31},
-		date:     date,
+		URL:      config.priceUrlDaily,
+		MaxRange: NordpoolRange{Day: 31},
+		Date:     date,
 	}
-	if opts.date != "" {
-		t, err := time.Parse(time.RFC3339, opts.date)
+	if opts.Date != "" {
+		t, err := time.Parse(time.RFC3339, opts.Date)
 		if err != nil {
 			return nil, err
 		}
-		nordpoolOpts.date = t
+		nordpoolOpts.Date = t
 	}
-	if opts.currency != "" {
-		nordpoolOpts.currency = opts.currency
+	if opts.Currency != "" {
+		nordpoolOpts.Currency = opts.Currency
 	}
-	if opts.area != "" {
-		nordpoolOpts.area = opts.area
+	if opts.Area != "" {
+		nordpoolOpts.Area = opts.Area
 	}
 	return p.getValues(nordpoolOpts)
 }
 
-func (p Prices) weekly(opts PriceOptions) ([]Result, error) {
+func (p Prices) Weekly(opts PriceOptions) ([]Result, error) {
 	location, err := time.LoadLocation("Europe/Oslo")
 	if err != nil {
 		return nil, err
 	}
 	date := time.Now().In(location)
 	nordpoolOpts := NordpoolOptions{
-		url:      config.priceUrlWeekly,
-		maxRange: NordpoolRange{week: 24},
-		date:     date,
+		URL:      config.priceUrlWeekly,
+		MaxRange: NordpoolRange{Week: 24},
+		Date:     date,
 	}
-	if opts.date != "" {
-		t, err := time.Parse(time.RFC3339, opts.date)
+	if opts.Date != "" {
+		t, err := time.Parse(time.RFC3339, opts.Date)
 		if err != nil {
 			return nil, err
 		}
-		nordpoolOpts.date = t
+		nordpoolOpts.Date = t
 	}
-	if opts.currency != "" {
-		nordpoolOpts.currency = opts.currency
+	if opts.Currency != "" {
+		nordpoolOpts.Currency = opts.Currency
 	}
-	if opts.area != "" {
-		nordpoolOpts.area = opts.area
+	if opts.Area != "" {
+		nordpoolOpts.Area = opts.Area
 	}
 	return p.getValues(nordpoolOpts)
 }
 
-func (p Prices) monthly(opts PriceOptions) ([]Result, error) {
+func (p Prices) Monthly(opts PriceOptions) ([]Result, error) {
 	location, err := time.LoadLocation("Europe/Oslo")
 	if err != nil {
 		return nil, err
 	}
 	date := time.Now().In(location)
 	nordpoolOpts := NordpoolOptions{
-		url:      config.priceUrlMonthly,
-		maxRange: NordpoolRange{month: 53},
-		date:     date,
+		URL:      config.priceUrlMonthly,
+		MaxRange: NordpoolRange{Month: 53},
+		Date:     date,
 	}
-	if opts.date != "" {
-		t, err := time.Parse(time.RFC3339, opts.date)
+	if opts.Date != "" {
+		t, err := time.Parse(time.RFC3339, opts.Date)
 		if err != nil {
 			return nil, err
 		}
-		nordpoolOpts.date = t
+		nordpoolOpts.Date = t
 	}
-	if opts.currency != "" {
-		nordpoolOpts.currency = opts.currency
+	if opts.Currency != "" {
+		nordpoolOpts.Currency = opts.Currency
 	}
-	if opts.area != "" {
-		nordpoolOpts.area = opts.area
+	if opts.Area != "" {
+		nordpoolOpts.Area = opts.Area
 	}
 	return p.getValues(nordpoolOpts)
 }
 
-func (p Prices) yearly(opts PriceOptions) ([]Result, error) {
+func (p Prices) Yearly(opts PriceOptions) ([]Result, error) {
 	location, err := time.LoadLocation("Europe/Oslo")
 	if err != nil {
 		return nil, err
 	}
 	date := time.Now().In(location)
 	nordpoolOpts := NordpoolOptions{
-		url:  config.priceUrlYearly,
-		date: date,
+		URL:  config.priceUrlYearly,
+		Date: date,
 	}
-	if opts.currency != "" {
-		nordpoolOpts.currency = opts.currency
+	if opts.Currency != "" {
+		nordpoolOpts.Currency = opts.Currency
 	}
-	if opts.area != "" {
-		nordpoolOpts.area = opts.area
+	if opts.Area != "" {
+		nordpoolOpts.Area = opts.Area
 	}
 	return p.getValues(nordpoolOpts)
 }
 
 func (p Prices) getValues(opts NordpoolOptions) ([]Result, error) {
 	var fromTime time.Time
-	if !opts.from.IsZero() {
+	if !opts.From.IsZero() {
 		var err error
-		fromTime, err = time.Parse(time.RFC3339, opts.from.Format(time.RFC3339))
+		fromTime, err = time.Parse(time.RFC3339, opts.From.Format(time.RFC3339))
 		if err != nil {
 
 			return nil, err
@@ -234,35 +236,35 @@ func (p Prices) getValues(opts NordpoolOptions) ([]Result, error) {
 
 	}
 	var toTime time.Time
-	if opts.to.IsZero() {
-		toTime, _ = time.Parse(time.RFC3339, opts.to.Format(time.RFC3339))
+	if opts.To.IsZero() {
+		toTime, _ = time.Parse(time.RFC3339, opts.To.Format(time.RFC3339))
 	}
-	var maxRangeKey string
-	var maxRangeValue int
-	if opts.maxRange != (NordpoolRange{}) {
-		if opts.maxRange.day != 0 {
-			maxRangeKey = "day"
-			maxRangeValue = opts.maxRange.day
-		} else if opts.maxRange.hour != 0 {
-			maxRangeKey = "hour"
-			maxRangeValue = opts.maxRange.hour
-		} else if opts.maxRange.month != 0 {
-			maxRangeKey = "month"
-			maxRangeValue = opts.maxRange.month
-		} else if opts.maxRange.week != 0 {
-			maxRangeKey = "week"
-			maxRangeValue = opts.maxRange.week
+	var MaxRangeKey string
+	var MaxRangeValue int
+	if opts.MaxRange != (NordpoolRange{}) {
+		if opts.MaxRange.Day != 0 {
+			MaxRangeKey = "day"
+			MaxRangeValue = opts.MaxRange.Day
+		} else if opts.MaxRange.Hour != 0 {
+			MaxRangeKey = "hour"
+			MaxRangeValue = opts.MaxRange.Hour
+		} else if opts.MaxRange.Month != 0 {
+			MaxRangeKey = "month"
+			MaxRangeValue = opts.MaxRange.Month
+		} else if opts.MaxRange.Week != 0 {
+			MaxRangeKey = "week"
+			MaxRangeValue = opts.MaxRange.Week
 		}
 	}
-	if !fromTime.IsZero() && !toTime.IsZero() && maxRangeKey != "" && maxRangeValue != 0 {
-		minFromTime := toTime.Add(-time.Duration(maxRangeValue) * time.Hour)
+	if !fromTime.IsZero() && !toTime.IsZero() && MaxRangeKey != "" && MaxRangeValue != 0 {
+		minFromTime := toTime.Add(-time.Duration(MaxRangeValue) * time.Hour)
 		if fromTime.Before(minFromTime) {
 			fmt.Println("Time span too long. Setting start time to", minFromTime.Format(time.RFC3339))
 			fromTime = minFromTime
 		}
 	}
 
-	currency := opts.currency
+	currency := opts.Currency
 	if currency == "" {
 		currency = "EUR"
 	}
@@ -270,14 +272,14 @@ func (p Prices) getValues(opts NordpoolOptions) ([]Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	date, err := time.ParseInLocation(time.RFC3339, opts.date.Format(time.RFC3339), location)
+	date, err := time.ParseInLocation(time.RFC3339, opts.Date.Format(time.RFC3339), location)
 	if err != nil {
 		return nil, err
 	}
 	if err != nil {
 		return nil, err
 	}
-	url := fmt.Sprintf("%s?currency=,%s,%s,%s&endDate=%s", opts.url, currency, currency, currency, date.Format("02-01-2006"))
+	url := fmt.Sprintf("%s?currency=,%s,%s,%s&endDate=%s", opts.URL, currency, currency, currency, date.Format("02-01-2006"))
 
 	resp, err := http.Get(url)
 
@@ -315,7 +317,7 @@ func (p Prices) getValues(opts NordpoolOptions) ([]Result, error) {
 					continue
 				}
 				area := columnMap["Name"].(string)
-				if opts.area == "" || opts.area == area {
+				if opts.Area == "" || opts.Area == area {
 					values = append(values, Result{Area: area, Date: date, Value: int(value)})
 				}
 			}
