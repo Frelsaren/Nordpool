@@ -10,26 +10,6 @@ import (
 	"time"
 )
 
-const baseUrl = "https://www.nordpoolgroup.com/api"
-
-var config = struct {
-	baseUrl         string
-	priceUrlHourly  string
-	priceUrlDaily   string
-	priceUrlWeekly  string
-	priceUrlMonthly string
-	priceUrlYearly  string
-	timezone        string
-}{
-	baseUrl:         baseUrl,
-	priceUrlHourly:  baseUrl + "/marketdata/page/10",
-	priceUrlDaily:   baseUrl + "/marketdata/page/11",
-	priceUrlWeekly:  baseUrl + "/marketdata/page/12",
-	priceUrlMonthly: baseUrl + "/marketdata/page/13",
-	priceUrlYearly:  baseUrl + "/marketdata/page/14",
-	timezone:        "Europe/Oslo",
-}
-
 type PriceOptions struct {
 	Area     string
 	Currency string
@@ -50,7 +30,7 @@ type NordpoolOptions struct {
 	MaxRange      NordpoolRange
 	MaxRangeValue int
 	Date          time.Time
-	PriceOptions  // Omit<PriceOptions, "date">
+	PriceOptions
 }
 
 type DateType struct{}
@@ -98,7 +78,7 @@ func (p Prices) At(opts PriceOptions) (Result, error) {
 func (p Prices) Hourly(opts PriceOptions) ([]Result, error) {
 	location, err := time.LoadLocation("Europe/Oslo")
 	if err != nil {
-		// handle error
+		return nil, err
 	}
 	date := time.Now().In(location)
 	nordpoolOpts := NordpoolOptions{
@@ -107,11 +87,11 @@ func (p Prices) Hourly(opts PriceOptions) ([]Result, error) {
 		Date:     date,
 	}
 	if opts.Date != "" {
-		t, err := time.Parse(time.RFC3339, opts.Date)
-		if err != nil {
+		if t, err := time.Parse(time.RFC3339, opts.Date); err == nil {
+			nordpoolOpts.Date = t
+		} else {
 			return nil, err
 		}
-		nordpoolOpts.Date = t
 	}
 	if opts.Currency != "" {
 		nordpoolOpts.Currency = opts.Currency
