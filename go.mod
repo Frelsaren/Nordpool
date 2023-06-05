@@ -1,3 +1,3 @@
-module nordpool-go
+module nordpool
 
 go 1.20
