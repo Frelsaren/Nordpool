@@ -11,7 +11,7 @@ It is heavily inspired by https://github.com/samuelmr/nordpool-node
 
 To use the nordpool module in your Go code, you can import it using the appropriate import path:
 
-`import "github.com/yourusername/nordpool"`
+`import "github.com/Frelsaren/nordpool"`
 
 The nordpool module provides a GetHourlyPrices function that allows you to retrieve hourly electricity prices for a specific region and date:
 
